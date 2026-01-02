@@ -1,0 +1,29 @@
+[
+    {
+        "id": 0,
+        "image": "https://static.wikia.nocookie.net/bandori/images/8/81/Kaoru_Casual_Chibi.png",
+        "likes": 83,
+        "date": "February 28",
+        "content": "덧없는 하루하루, 여기서 끝이 나는구나...",
+        "liked": false,
+        "user": "Kaoru Moon"
+    },
+    {
+        "id": 1,
+        "image": "https://i.pinimg.com/736x/4a/88/94/4a88946d28921697ae2c89697f2c0a27.jpg",
+        "likes": 91,
+        "date": "July 7",
+        "content": "난 레어라고. 그래서 꽤 비싼 인재야.",
+        "liked": false,
+        "user": "Yusei Kim"
+    },
+    {
+        "id": 2,
+        "image": "https://static.wikia.nocookie.net/bandori/images/e/e1/Arisa_Casual_Chibi.png",
+        "likes": 107,
+        "date": "Oct 27",
+        "content": "나가 너를 좋아하는 것이 아니여!",
+        "liked": false,
+        "user": "Arisa Kim"
+    }
+]
