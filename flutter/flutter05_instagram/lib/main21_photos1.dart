@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
       "date": formattedData,
       "content": userContent,
       "liked": false,
-      "user": "John Kim"
+      "user": "Jack Yun"
     };
     setState(() {
       feedItems.insert(0, myData);
@@ -241,7 +241,7 @@ class Store1 extends ChangeNotifier {
 }
 
 class Store2 extends ChangeNotifier {
-  var name = 'Yusei Kim';
+  var name = 'Manju Hong';
 }
 
 class Upload extends StatelessWidget {
@@ -275,76 +275,57 @@ class Upload extends StatelessWidget {
   }
 }
 
-const List<String> profileImages = [
-  'assets/profile0.jpg',
-  'assets/profile1.jpg',
-  'assets/profile2.jpg',
-  'assets/profile3.jpg',
-  'assets/profile4.jpg',
-  'assets/profile5.jpg',
-  'assets/profile6.jpg',
-  'assets/profile7.jpg',
-  'assets/profile8.jpg',
-  'assets/profile9.jpg',
-  'assets/profile10.jpg',
-  'assets/profile11.jpg',
-  'assets/profile12.jpg',
-  'assets/profile13.jpg'
-];
 class Profile extends StatelessWidget {
   const Profile({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(context.watch<Store2>().name)),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: ProfileHeader(),
-          ),
-          SliverGrid(
-              delegate: SliverChildBuilderDelegate(
-                  (c, i) {
-                    return Image.asset(
-                      profileImages[i],
-                      fit: BoxFit.cover,
-                    );
+        appBar: AppBar(title: Text(context.watch<Store2>().name)),
+        body: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                CircleAvatar(
+                    radius: 30,
+                    backgroundImage: AssetImage('assets/Manju hong.webp')
+                ),
+
+                Text(
+                  '팔로워 ${context.watch<Store1>().follower}명',
+                  style: TextStyle(fontSize: 16),
+                ),
+
+                ElevatedButton(
+                  onPressed: (){
+                    context.read<Store1>().addFollower();
                   },
-                  childCount: profileImages.length,
-              ),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 5,
-                  crossAxisSpacing: 5
-              )
-          )
-        ],
-      ),
-    );
-  }
-}
+                  child: Text('팔로우')
+                ),
+                ElevatedButton(
+                    onPressed: (){
+                      context.read<Store1>().getData();
+                    }, 
+                    child: Text('사진 가져오기')
+                )
+              ],
+            ),
 
-class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        CircleAvatar(
-            radius: 30,
-            backgroundImage: AssetImage('assets/profile5.jpg')
+            Expanded(
+                child: ListView.builder(
+                    itemCount: context.watch<Store1>().profileImage.length,
+                    itemBuilder: (context, idx) {
+                      var img = context.watch<Store1>().profileImage[idx];
+                      return Padding(
+                        padding: EdgeInsets.all(5),
+                        child: Image.network(img),
+                      );
+                    }
+                )
+            ),
+          ],
         ),
-        Text('팔로워 ${context.watch<Store1>().follower}명'),
-        ElevatedButton(
-            onPressed: (){
-              context.read<Store1>().addFollower();
-            },
-            child: Text('팔로우')
-        )
-      ],
     );
   }
 }

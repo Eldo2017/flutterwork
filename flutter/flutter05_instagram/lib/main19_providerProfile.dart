@@ -9,16 +9,24 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:provider/provider.dart';
 
+/*
+  > 넘겨줘야 할 값이 있을 때 하위 위젯이 많으면 넘겨주기가 귀찮다
+  * Provider : 전송 없이 위젯이 state를 직접 가져다가 쓸 수 있게 해주는 패키지
+               (플러터 기본 기능에 InheritedWidget이 있으나, 문법이 어려워서 패키지 설치 후 사용을 권장한다)
+       - state 보관하는 storage 필요 : 모든 위젯들이 공유할 state들은 class를 따로 만들어야 한다
+         순서 : state class 만들기 -> 등록(ChangeNotifierProvider()로 감싸야 한다) -> 사용하면 끝
+ */
+
 void main() {
   runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (context) => Store1()),
-          ChangeNotifierProvider(create: (context) => Store2())
-        ],
+      ChangeNotifierProvider(
+        create: (context) => Store1(),
         child: MaterialApp(
           theme: style.theme,
-          home: const MyApp(),
+          initialRoute: '/',
+          routes: {
+            '/' : (context) => MyApp(),
+          },
         ),
       )
   );
@@ -67,19 +75,19 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  addMyData() {
+  addContent() {
     String formattedData = DateFormat('MMM dd').format(DateTime.now());
-    var myData = {
+    var myCon = {
       "id": feedItems.length,
-      "image": userImage,
+      "image": userImage is String ? userImage : userImage.path,
       "likes": 0,
       "date": formattedData,
       "content": userContent,
       "liked": false,
-      "user": "John Kim"
+      "user": "Jack Yun"
     };
     setState(() {
-      feedItems.insert(0, myData);
+      feedItems.insert(0, myCon);
     });
   }
 
@@ -87,7 +95,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:Text('Instargram'),
+        title:Text('Instagram'),
         actions: [
           IconButton(
               onPressed: () async {
@@ -96,13 +104,19 @@ class _MyAppState extends State<MyApp> {
                 if(image != null) {
                   setState(() {
                     userImage = File(image.path);
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Upload(
+                              userImage: userImage,
+                              setUserContent: setUserContent,
+                              addMyCon: addContent,
+                            )
+                        )
+                    );
                   });
                 }
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Upload(
-                    userImage: userImage,
-                    setUserContent: setUserContent,
-                    addMyData : addMyData
-                )));
               },
               icon: Icon(Icons.add_box_outlined)
           )
@@ -172,7 +186,6 @@ class _HomeState extends State<Home> {
       }
     });
   }
-
   @override
   Widget build(BuildContext context) {
     if(widget.feedItems.isNotEmpty) {
@@ -181,7 +194,7 @@ class _HomeState extends State<Home> {
           children: [
             widget.feedItems[i]['image'].runtimeType == String
                 ? Image.network(widget.feedItems[i]['image'])
-                : Image.file(widget.feedItems[i]['image'], height: 400, width: double.infinity, fit: BoxFit.cover),
+                : Image.file(widget.feedItems[i]['image']),
 
             Container(
               padding: EdgeInsets.all(20),
@@ -194,10 +207,10 @@ class _HomeState extends State<Home> {
                     child: Text('글쓴이 : ${widget.feedItems[i]['user']}'),
                     onTap: () {
                       Navigator.push(context,
-                          PageRouteBuilder(pageBuilder: (context, a1, a2) => Profile(),
-                              transitionsBuilder: (context, a1, a2, child) => FadeTransition(opacity: a1, child: child),
-                              transitionDuration: Duration(milliseconds: 1000)
-                          )
+                        PageRouteBuilder(pageBuilder: (context,a1,a2) => Profile(),
+                          transitionsBuilder: (context,a1,a2,child) => FadeTransition(opacity: a1,child: child),
+                          transitionDuration: Duration(milliseconds: 3000)
+                        )
                       );
                     },
                   ),
@@ -217,38 +230,22 @@ class _HomeState extends State<Home> {
 }
 
 class Store1 extends ChangeNotifier {
-  var follower = 0;
-  var isFollower = false;
-  var profileImage = [];
+  var name = 'Manju Hong';
 
-  getData() async {
-    var result = await http.get(Uri.parse('https://raw.githubusercontent.com/Eldo2017/flutterwork/main/flutter/data/profile.json'));
-    var result2 = jsonDecode(result.body);
-    profileImage = result2;
+  /*
+  changeName() {
+    // name = 'Manju Hong';
+    // 재렌더링은 setState의 사용없이 아래와 같이 사용한다
     notifyListeners();
   }
-
-  addFollower() {
-    if(isFollower) {
-      follower--;
-      isFollower = false;
-    } else {
-      follower++;
-      isFollower = true;
-    }
-    notifyListeners();
-  }
-}
-
-class Store2 extends ChangeNotifier {
-  var name = 'Yusei Kim';
+  */
 }
 
 class Upload extends StatelessWidget {
-  const Upload({super.key, this.userImage, this.setUserContent, this.addMyData});
+  const Upload({super.key, this.userImage, this.setUserContent, this.addMyCon});
   final userImage;
   final setUserContent;
-  final addMyData;
+  final addMyCon;
 
   @override
   Widget build(BuildContext context) {
@@ -256,7 +253,7 @@ class Upload extends StatelessWidget {
       appBar: AppBar(
         actions: [
           IconButton(onPressed: (){
-            addMyData();
+            addMyCon();
             Navigator.pop(context);
           }, icon: Icon(Icons.send))
         ],
@@ -265,7 +262,7 @@ class Upload extends StatelessWidget {
         children: [
           Image.file(userImage),
           Text('이미지 업로드 화면'),
-          TextField(onChanged: (text) {
+          TextField(onChanged: (text){
             setUserContent(text);
           }),
           IconButton(onPressed: (){ Navigator.pop(context); }, icon: Icon(Icons.close))
@@ -275,49 +272,52 @@ class Upload extends StatelessWidget {
   }
 }
 
-const List<String> profileImages = [
-  'assets/profile0.jpg',
-  'assets/profile1.jpg',
-  'assets/profile2.jpg',
-  'assets/profile3.jpg',
-  'assets/profile4.jpg',
-  'assets/profile5.jpg',
-  'assets/profile6.jpg',
-  'assets/profile7.jpg',
-  'assets/profile8.jpg',
-  'assets/profile9.jpg',
-  'assets/profile10.jpg',
-  'assets/profile11.jpg',
-  'assets/profile12.jpg',
-  'assets/profile13.jpg'
-];
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
   const Profile({super.key});
 
   @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  int follower = 0;
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(context.watch<Store2>().name)),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: ProfileHeader(),
+      appBar: AppBar(title: Text(context.watch<Store1>().name)),
+      /*
+      body: ElevatedButton(
+          onPressed: (){
+            context.read<Store1>().changeName();
+          },
+          child: Text('이름 바꾸기')
+      )
+       */
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          CircleAvatar(
+              radius: 35,
+              backgroundImage: AssetImage('assets/Manju hong.webp'),
           ),
-          SliverGrid(
-              delegate: SliverChildBuilderDelegate(
-                  (c, i) {
-                    return Image.asset(
-                      profileImages[i],
-                      fit: BoxFit.cover,
-                    );
-                  },
-                  childCount: profileImages.length,
-              ),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 5,
-                  crossAxisSpacing: 5
-              )
+
+          SizedBox(width: 15),
+
+          // 팔로워 수
+          Text(
+            '팔로워 $follower명',
+            style: TextStyle(fontSize: 18),
+          ),
+
+          SizedBox(width: 15),
+
+          ElevatedButton(
+              onPressed: (){
+                setState(() {
+                  follower = follower == 0 ? 1 : 0;
+                });
+              },
+              child: Text('팔로우하기')
           )
         ],
       ),
@@ -325,26 +325,8 @@ class Profile extends StatelessWidget {
   }
 }
 
-class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        CircleAvatar(
-            radius: 30,
-            backgroundImage: AssetImage('assets/profile5.jpg')
-        ),
-        Text('팔로워 ${context.watch<Store1>().follower}명'),
-        ElevatedButton(
-            onPressed: (){
-              context.read<Store1>().addFollower();
-            },
-            child: Text('팔로우')
-        )
-      ],
-    );
-  }
-}
+/*
+  - Provider 사용할 때
+    > context.watch<>() : state를 출력할 때
+    > context.read<>() : state 내 함수를 사용할 때
+ */

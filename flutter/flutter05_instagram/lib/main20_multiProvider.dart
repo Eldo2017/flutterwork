@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   getData() async {
-    var result = await http.get(Uri.parse('https://raw.githubusercontent.com/Eldo2017/flutterwork/main/flutter/data/MyData1.json'));
+    var result = await http.get(Uri.parse('https://itwon.store/flutter/data/data.json'));
     if(result.statusCode == 200) {
       var result2 = jsonDecode(result.body);
       setState(() {
@@ -147,7 +147,7 @@ class _HomeState extends State<Home> {
     if(isLoading || !hasMore) return;
 
     isLoading = true;
-    var result = await http.get(Uri.parse('https://raw.githubusercontent.com/Eldo2017/flutterwork/main/flutter/data/MyData$page.json'));
+    var result = await http.get(Uri.parse('https://itwon.store/flutter/data/data$page.json'));
     if(result.statusCode == 200) {
       var result2 = jsonDecode(result.body);
       if(result2.isEmpty) {
@@ -219,14 +219,6 @@ class _HomeState extends State<Home> {
 class Store1 extends ChangeNotifier {
   var follower = 0;
   var isFollower = false;
-  var profileImage = [];
-
-  getData() async {
-    var result = await http.get(Uri.parse('https://raw.githubusercontent.com/Eldo2017/flutterwork/main/flutter/data/profile.json'));
-    var result2 = jsonDecode(result.body);
-    profileImage = result2;
-    notifyListeners();
-  }
 
   addFollower() {
     if(isFollower) {
@@ -241,7 +233,7 @@ class Store1 extends ChangeNotifier {
 }
 
 class Store2 extends ChangeNotifier {
-  var name = 'Yusei Kim';
+  var name = 'john kim';
 }
 
 class Upload extends StatelessWidget {
@@ -275,76 +267,29 @@ class Upload extends StatelessWidget {
   }
 }
 
-const List<String> profileImages = [
-  'assets/profile0.jpg',
-  'assets/profile1.jpg',
-  'assets/profile2.jpg',
-  'assets/profile3.jpg',
-  'assets/profile4.jpg',
-  'assets/profile5.jpg',
-  'assets/profile6.jpg',
-  'assets/profile7.jpg',
-  'assets/profile8.jpg',
-  'assets/profile9.jpg',
-  'assets/profile10.jpg',
-  'assets/profile11.jpg',
-  'assets/profile12.jpg',
-  'assets/profile13.jpg'
-];
 class Profile extends StatelessWidget {
   const Profile({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(context.watch<Store2>().name)),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: ProfileHeader(),
-          ),
-          SliverGrid(
-              delegate: SliverChildBuilderDelegate(
-                  (c, i) {
-                    return Image.asset(
-                      profileImages[i],
-                      fit: BoxFit.cover,
-                    );
-                  },
-                  childCount: profileImages.length,
-              ),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 5,
-                  crossAxisSpacing: 5
-              )
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        CircleAvatar(
-            radius: 30,
-            backgroundImage: AssetImage('assets/profile5.jpg')
-        ),
-        Text('팔로워 ${context.watch<Store1>().follower}명'),
-        ElevatedButton(
-            onPressed: (){
-              context.read<Store1>().addFollower();
-            },
-            child: Text('팔로우')
+        appBar: AppBar(title: Text(context.watch<Store2>().name)),
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            CircleAvatar(
+                radius: 30,
+                backgroundImage: AssetImage('assets/img/user1.png')
+            ),
+            Text('팔로워 ${context.watch<Store1>().follower}명'),
+            ElevatedButton(
+                onPressed: (){
+                  context.read<Store1>().addFollower();
+                },
+                child: Text('팔로우')
+            ),
+          ],
         )
-      ],
     );
   }
 }
