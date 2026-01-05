@@ -16,5 +16,14 @@
         "content": "건방진 놈의 자식이! 우리 선배님한테 유성이가 뭐야 유성이가!",
         "liked": false,
         "user": "Saaya Kim"
+    },
+    {
+        "id": 5,
+        "image": "https://static.wikia.nocookie.net/beyblade/images/e/e3/Beyblade_X_-_King_Manju_%28Remastered_Render%29.png",
+        "likes": 133,
+        "date": "Oct 4",
+        "content": "불을 질러버려라! 이 교구실 당분간 쓰지 못하게 불을 붙여 태워버려!",
+        "liked": false,
+        "user": "Manju Kim"
     }
 ]
