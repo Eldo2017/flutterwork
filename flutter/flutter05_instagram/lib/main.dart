@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter05_instagram/notification.dart';
 import './style.dart' as style;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -8,6 +9,13 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:provider/provider.dart';
+
+/*
+  알림
+  notification 2가지 종류
+  - push notification: 서버에서 보내는 알림
+  - local notification: 앱 자체에서 실행하는 알림
+ */
 
 void main() {
   runApp(
@@ -46,6 +54,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    initNotification(context);
     getData();
   }
 
@@ -76,7 +85,7 @@ class _MyAppState extends State<MyApp> {
       "date": formattedData,
       "content": userContent,
       "liked": false,
-      "user": "John Kim"
+      "user": "Arisa Kim"
     };
     setState(() {
       feedItems.insert(0, myData);
@@ -89,6 +98,22 @@ class _MyAppState extends State<MyApp> {
       appBar: AppBar(
         title:Text('Instargram'),
         actions: [
+          IconButton(
+              onPressed: () {
+                showNotificationII();
+                print("알림 발신 성공");
+              },
+              icon: Icon(Icons.access_alarm_sharp)
+          ),
+          /*
+          IconButton(
+              onPressed: () async {
+                await notifications.cancel(1);
+                print("알림 발신 성공");
+              },
+              icon: Icon(Icons.cancel_sharp)
+          ),
+           */
           IconButton(
               onPressed: () async {
                 var picker = ImagePicker();
@@ -314,7 +339,7 @@ class Profile extends StatelessWidget {
                   childCount: profileImages.length,
               ),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                  crossAxisCount: 3,
                   mainAxisSpacing: 5,
                   crossAxisSpacing: 5
               )
