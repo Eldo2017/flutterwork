@@ -3,21 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter05_instagram/notification.dart';
 import './style.dart' as style;
 import 'package:http/http.dart' as http;
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'dart:convert';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:provider/provider.dart';
+import 'shop.dart';
 
-/*
-  알림
-  notification 2가지 종류
-  - push notification: 서버에서 보내는 알림
-  - local notification: 앱 자체에서 실행하는 알림
- */
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(
       MultiProvider(
         providers: [
@@ -105,15 +107,6 @@ class _MyAppState extends State<MyApp> {
               },
               icon: Icon(Icons.access_alarm_sharp)
           ),
-          /*
-          IconButton(
-              onPressed: () async {
-                await notifications.cancel(1);
-                print("알림 발신 성공");
-              },
-              icon: Icon(Icons.cancel_sharp)
-          ),
-           */
           IconButton(
               onPressed: () async {
                 var picker = ImagePicker();
@@ -133,7 +126,7 @@ class _MyAppState extends State<MyApp> {
           )
         ],
       ),
-      body: [Home(feedItems: feedItems, addData: addData), Text('Shop Page')][tab],
+      body: [Home(feedItems: feedItems, addData: addData), Shop()][tab],
       bottomNavigationBar: BottomNavigationBar(
           showSelectedLabels: false,
           showUnselectedLabels: false,

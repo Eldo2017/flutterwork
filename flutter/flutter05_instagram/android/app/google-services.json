@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "795443920966",
+    "project_id": "darkstargram",
+    "storage_bucket": "darkstargram.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:795443920966:android:b89d39cb40de1fbc160a47",
+        "android_client_info": {
+          "package_name": "com.study.flutter05_instagram"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAThQJaY8kPNR44WBkVCcC_NpOGa2xHBOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
